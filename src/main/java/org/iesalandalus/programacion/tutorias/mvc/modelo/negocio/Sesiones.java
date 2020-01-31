@@ -1,10 +1,12 @@
 package org.iesalandalus.programacion.tutorias.mvc.modelo.negocio;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
 
+import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Profesor;
 import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Sesion;
 import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Tutoria;
 
@@ -19,7 +21,13 @@ public class Sesiones {
 
 	// Getters
 	public List<Sesion> get() {
-		return copiaProfundaSesiones();
+		List<Sesion> sesionesOrdenadas = copiaProfundaSesiones();
+		Comparator<Profesor> comparadorProfesor = Comparator.comparing(Profesor::getDni);
+		Comparator<Tutoria> comparadorTutoria = Comparator.comparing(Tutoria::getProfesor, comparadorProfesor)
+				.thenComparing(Tutoria::getNombre);
+		sesionesOrdenadas
+				.sort(Comparator.comparing(Sesion::getTutoria, comparadorTutoria).thenComparing(Sesion::getFecha));
+		return sesionesOrdenadas;
 	}
 
 	// Copia profunda sesiones
@@ -32,18 +40,23 @@ public class Sesiones {
 	}
 
 	// Sesion tutoria
-	public Sesion[] get(Tutoria tutoria) {
+	public List<Sesion> get(Tutoria tutoria) {
 		if (tutoria == null) {
 			throw new NullPointerException("ERROR: La tutoría no puede ser nula.");
 		}
-		Sesion[] sesionTutoria = new Sesion[capacidad];
-		int j = 0;
-		for (int i = 0; !tamanoSuperado(i); i++) {
-			if (coleccionSesiones[i].getTutoria().equals(tutoria)) {
-				sesionTutoria[j++] = new Sesion(coleccionSesiones[i]);
+		
+		List<Sesion> sesionesTutoria = new ArrayList<>();
+		for (Sesion sesion : coleccionSesiones) {
+			if (sesion.getTutoria().equals(tutoria)) {
+				sesionesTutoria.add(new Sesion(sesion));
 			}
 		}
-		return sesionTutoria;
+		Comparator<Profesor> comparadorProfesor = Comparator.comparing(Profesor::getDni);
+		Comparator<Tutoria> comparadorTutoria = Comparator.comparing(Tutoria::getProfesor, comparadorProfesor)
+				.thenComparing(Tutoria::getNombre);
+		sesionesTutoria
+				.sort(Comparator.comparing(Sesion::getTutoria, comparadorTutoria).thenComparing(Sesion::getFecha));
+		return sesionesTutoria;
 	}
 
 	public int getTamano() {
