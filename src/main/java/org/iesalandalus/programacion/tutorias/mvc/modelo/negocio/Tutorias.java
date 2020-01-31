@@ -1,6 +1,7 @@
 package org.iesalandalus.programacion.tutorias.mvc.modelo.negocio;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
@@ -11,38 +12,44 @@ public class Tutorias {
 
 	private List<Tutoria> coleccionTutorias;
 
-	// Constructor 
+	// Constructor
 	public Tutorias() {
 		coleccionTutorias = new ArrayList();
 	}
 
 	// Getters
 	public List<Tutoria> get() {
-		return copiaProfundaTutorias();
+		List<Tutoria> tutoriasOrdenadas = copiaProfundaTutorias();
+		Comparator<Profesor> comprobadorProfesores = Comparator.comparing(Profesor::getDni);
+		tutoriasOrdenadas.sort(Comparator.comparing(Tutoria::getProfesor, comprobadorProfesores)
+				.thenComparing(Comparator.comparing(Tutoria::getNombre)));
+		return tutoriasOrdenadas;
 	}
 
 	// Copia profunda tutorias
 	private List<Tutoria> copiaProfundaTutorias() {
 		List<Tutoria> copiaTutoria = new ArrayList<>();
 		for (Tutoria tutoria : coleccionTutorias) {
-			coleccionTutorias.add(new Tutoria(tutoria));
+			copiaTutoria.add(new Tutoria(tutoria));
 		}
 		return copiaTutoria;
 	}
 
 	// Tutoria profesor
-	public Tutoria[] get(Profesor profesor) {
+	public List<Tutoria> get(Profesor profesor) {
 		if (profesor == null) {
 			throw new NullPointerException("ERROR: El profesor no puede ser nulo.");
 		}
-		Tutoria[] tutoriaProfesor = new Tutoria[capacidad];
-		int j = 0;
-		for (int i = 0; !tamanoSuperado(i); i++) {
-			if (coleccionTutorias[i].getProfesor().equals(profesor)) {
-				tutoriaProfesor[j++] = new Tutoria(coleccionTutorias[i]);
+		List<Tutoria> tutoriasProfesor = new ArrayList<>();
+		for (Tutoria tutoria : coleccionTutorias) {
+			if (tutoria.getProfesor().equals(profesor)) {
+				tutoriasProfesor.add(new Tutoria(tutoria));
 			}
 		}
-		return tutoriaProfesor;
+		Comparator<Profesor> comprobadorProfesores = Comparator.comparing(Profesor::getDni);
+		tutoriasProfesor.sort(Comparator.comparing(Tutoria::getProfesor, comprobadorProfesores)
+				.thenComparing(Comparator.comparing(Tutoria::getNombre)));
+		return tutoriasProfesor;
 	}
 
 	public int getTamano() {
