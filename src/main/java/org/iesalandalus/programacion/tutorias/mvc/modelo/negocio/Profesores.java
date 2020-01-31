@@ -1,24 +1,26 @@
 package org.iesalandalus.programacion.tutorias.mvc.modelo.negocio;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
-import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Alumno;
 import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Profesor;
 
 public class Profesores {
 
 	private List<Profesor> coleccionProfesores;
 
-	// Constructor con parámetros
+	// Constructor
 	public Profesores() {
 		coleccionProfesores = new ArrayList();
 	}
 
 	// Getters
 	public List<Profesor> get() {
-		return copiaProfundaProfesores();
+		List<Profesor> profesoresOrdenados = copiaProfundaProfesores();
+		profesoresOrdenados.sort(Comparator.comparing(Profesor::getDni));
+		return profesoresOrdenados;
 	}
 
 	// Copia profunda de Profesores
@@ -36,13 +38,11 @@ public class Profesores {
 
 	// Insertar profesor
 	public void insertar(Profesor profesor) throws OperationNotSupportedException {
-
 		if (profesor == null) {
 			throw new NullPointerException("ERROR: No se puede insertar un profesor nulo.");
 		}
 
 		int indice = coleccionProfesores.indexOf(profesor);
-
 		if (indice == -1) {
 			coleccionProfesores.add(new Profesor(profesor));
 		} else {
@@ -68,13 +68,11 @@ public class Profesores {
 
 	// Borrar profesore
 	public void borrar(Profesor profesor) throws OperationNotSupportedException {
-
 		if (profesor == null) {
 			throw new IllegalArgumentException("ERROR: No se puede borrar un profesor nulo.");
 		}
 
 		int indice = coleccionProfesores.indexOf(profesor);
-
 		if (indice == -1) {
 			throw new OperationNotSupportedException("ERROR: No existe ningún profesor con ese DNI.");
 		} else {
