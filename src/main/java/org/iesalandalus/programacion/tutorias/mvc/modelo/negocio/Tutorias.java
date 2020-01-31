@@ -48,7 +48,7 @@ public class Tutorias {
 		}
 		Comparator<Profesor> comprobadorProfesores = Comparator.comparing(Profesor::getDni);
 		tutoriasProfesor.sort(
-				Comparator.comparing(Tutoria::getProfesor, comprobadorProfesores).thenComparing(Tutoria::getNombre));
+				Comparator.comparing(Tutoria::getNombre));
 		return tutoriasProfesor;
 	}
 

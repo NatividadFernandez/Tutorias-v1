@@ -55,7 +55,7 @@ public class Sesiones {
 		Comparator<Tutoria> comparadorTutoria = Comparator.comparing(Tutoria::getProfesor, comparadorProfesor)
 				.thenComparing(Tutoria::getNombre);
 		sesionesTutoria
-				.sort(Comparator.comparing(Sesion::getTutoria, comparadorTutoria).thenComparing(Sesion::getFecha));
+				.sort(Comparator.comparing(Sesion::getFecha));
 		return sesionesTutoria;
 	}
 
