@@ -1,13 +1,16 @@
 package org.iesalandalus.programacion.tutorias.mvc.modelo.negocio;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
 
 import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Alumno;
 import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Cita;
+import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Profesor;
 import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Sesion;
+import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Tutoria;
 
 public class Citas {
 
@@ -20,46 +23,57 @@ public class Citas {
 
 	// Getters
 	public List<Cita> get() {
-		return copiaProfundaCitas();
+		List<Cita> citasOrdenadas = copiaProfundaCitas();
+		Comparator<Profesor> comparadorProfesor = Comparator.comparing(Profesor::getDni);
+		Comparator<Tutoria> comparadorTutoria = Comparator.comparing(Tutoria::getProfesor,comparadorProfesor).thenComparing(Tutoria::getNombre);
+		Comparator<Sesion> comparadorSesion = Comparator.comparing(Sesion::getTutoria,comparadorTutoria).thenComparing(Sesion::getFecha);
+		citasOrdenadas.sort(Comparator.comparing(Cita::getSesion,comparadorSesion).thenComparing(Cita::getHora));
+		return citasOrdenadas;
 	}
 
 	// Copia profunda citas
 	private List<Cita> copiaProfundaCitas() {
-		List<Cita> copiaCita = new ArrayList<>();
+		List<Cita> copiaCitas = new ArrayList<>();
 		for (Cita cita : coleccionCitas) {
-			copiaCita.add(new Cita(cita));
+			copiaCitas.add(new Cita(cita));
 		}
-		return copiaCita;
+		return copiaCitas;
 	}
 
 	// Cita sesion
-	public Cita[] get(Sesion sesion) {
+	public List<Cita> get(Sesion sesion) {
 		if (sesion == null) {
 			throw new NullPointerException("ERROR: La sesión no puede ser nula.");
 		}
-		Cita[] citaSesion = new Cita[capacidad];
-		int j = 0;
-		for (int i = 0; !tamanoSuperado(i); i++) {
-			if (coleccionCitas[i].getSesion().equals(sesion)) {
-				citaSesion[j++] = new Cita(coleccionCitas[i]);
+		List<Cita> citasSesion = new ArrayList<>();
+		for (Cita cita : coleccionCitas) {
+			if (cita.getSesion().equals(sesion)) {
+				citasSesion.add(new Cita(cita));
 			}
 		}
-		return citaSesion;
+		Comparator<Profesor> comparadorProfesor = Comparator.comparing(Profesor::getDni);
+		Comparator<Tutoria> comparadorTutoria = Comparator.comparing(Tutoria::getProfesor,comparadorProfesor).thenComparing(Tutoria::getNombre);
+		Comparator<Sesion> comparadorSesion = Comparator.comparing(Sesion::getTutoria,comparadorTutoria).thenComparing(Sesion::getFecha);
+		citasSesion.sort(Comparator.comparing(Cita::getHora));
+		return citasSesion;
 	}
 
 	// Cita alumno
-	public Cita[] get(Alumno alumno) {
+	public List<Cita> get(Alumno alumno) {
 		if (alumno == null) {
 			throw new NullPointerException("ERROR: El alumno no puede ser nulo.");
 		}
-		Cita[] citaAlumno = new Cita[capacidad];
-		int j = 0;
-		for (int i = 0; !tamanoSuperado(i); i++) {
-			if (coleccionCitas[i].getAlumno().equals(alumno)) {
-				citaAlumno[j++] = new Cita(coleccionCitas[i]);
+		List<Cita> citasAlumno = new ArrayList<>();
+		for (Cita cita : coleccionCitas) {
+			if (cita.getAlumno().equals(alumno)) {
+				citasAlumno.add(new Cita(cita));
 			}
 		}
-		return citaAlumno;
+		Comparator<Profesor> comparadorProfesor = Comparator.comparing(Profesor::getDni);
+		Comparator<Tutoria> comparadorTutoria = Comparator.comparing(Tutoria::getProfesor,comparadorProfesor).thenComparing(Tutoria::getNombre);
+		Comparator<Sesion> comparadorSesion = Comparator.comparing(Sesion::getTutoria,comparadorTutoria).thenComparing(Sesion::getFecha);
+		citasAlumno.sort(Comparator.comparing(Cita::getSesion,comparadorSesion).thenComparing(Cita::getHora));
+		return citasAlumno;
 	}
 
 	public int getTamano() {
