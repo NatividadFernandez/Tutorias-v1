@@ -1,6 +1,7 @@
 package org.iesalandalus.programacion.tutorias.mvc.modelo.negocio;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
@@ -18,7 +19,9 @@ public class Alumnos {
 
 	// Getters
 	public List<Alumno> get() {
-		return copiaProfundaAlumnos();
+		List<Alumno> alumnosOrdenados = copiaProfundaAlumnos();
+		alumnosOrdenados.sort(Comparator.comparing(Alumno::getCorreo));
+		return alumnosOrdenados;
 	}
 
 	// Copia profunda alumnos
@@ -36,13 +39,11 @@ public class Alumnos {
 
 	// Insertar alumno
 	public void insertar(Alumno alumno) throws OperationNotSupportedException {
-
 		if (alumno == null) {
 			throw new NullPointerException("ERROR: No se puede insertar un alumno nulo.");
 		}
 
 		int indice = coleccionAlumnos.indexOf(alumno);
-
 		if (indice == -1) {
 			coleccionAlumnos.add(new Alumno(alumno));
 		} else {
@@ -72,7 +73,6 @@ public class Alumnos {
 		}
 
 		int indice = coleccionAlumnos.indexOf(alumno);
-
 		if (indice == -1) {
 			throw new OperationNotSupportedException("ERROR: No existe ningún alumno con ese expediente.");
 		} else {
