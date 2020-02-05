@@ -17,7 +17,7 @@ public class Alumno {
 		setNombre(nombre);
 		setCorreo(correo);
 		incremientaUltimoIdentificador();
-		setExpediente(PREFIJO_EXPEDIENTE + getIniciales() + "_" + ultimoIdentificador);
+		setExpediente();
 	}
 
 	// Constructor copia
@@ -27,7 +27,7 @@ public class Alumno {
 		}
 		setNombre(alumno.getNombre());
 		setCorreo(alumno.getCorreo());
-		setExpediente(alumno.getExpediente());
+		setExpediente();
 	}
 
 	// Alumno ficticio
@@ -79,8 +79,8 @@ public class Alumno {
 		return expediente;
 	}
 
-	private void setExpediente(String expediente) {
-		this.expediente = expediente;
+	private void setExpediente() {
+		this.expediente = PREFIJO_EXPEDIENTE + getIniciales() + "_" + ultimoIdentificador;
 	}
 
 	// Formateamos el nombre
