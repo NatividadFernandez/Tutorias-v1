@@ -107,7 +107,7 @@ public class Sesion {
 	// Validez Sesion
 	private void comprobarValidezSesion() {
 
-		if (fecha.equals(fecha.now())) {
+		if (fecha.equals(LocalDate.now())) {
 			throw new IllegalArgumentException("ERROR: Las sesiones de deben planificar para fechas futuras.");
 		}
 
