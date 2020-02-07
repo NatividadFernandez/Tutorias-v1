@@ -12,7 +12,7 @@ public class Sesion {
 	private static final LocalTime HORA_COMIENZO_CLASES = LocalTime.of(16, 00);
 	private static final LocalTime HORA_FIN_CLASES = LocalTime.of(22, 15);
 	public static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-	public static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("hh:mm");
+	public static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("HH:mm");
 	private LocalDate fecha;
 	private LocalTime horaInicio;
 	private LocalTime horaFin;
@@ -107,7 +107,7 @@ public class Sesion {
 	// Validez Sesion
 	private void comprobarValidezSesion() {
 
-		if (fecha.equals(LocalDate.now())) {
+		if (fecha.equals(LocalDate.now()) || fecha.getYear() < LocalDate.now().getYear()) {
 			throw new IllegalArgumentException("ERROR: Las sesiones de deben planificar para fechas futuras.");
 		}
 

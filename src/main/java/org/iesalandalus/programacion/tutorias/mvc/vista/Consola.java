@@ -2,6 +2,9 @@ package org.iesalandalus.programacion.tutorias.mvc.vista;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+
+import javax.naming.TimeLimitExceededException;
 
 import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Alumno;
 import org.iesalandalus.programacion.tutorias.mvc.modelo.dominio.Cita;
@@ -92,65 +95,45 @@ public class Consola {
 	}
 
 	public static Sesion leerSesion() {
-		LocalDate fecha;
-		LocalTime horaInicioSesion, horaFinSesion;
-		int horaInicio, minInicio, horaFin, minFin;
-		int annio, mes, dia, minDuracion;
-		
+		LocalDate fecha = null;
+		LocalTime horaInicioSesion = null, horaFinSesion = null;
+		String fechaUsuario, horaInicioUsuario, horaFinUsuario;
+		int minDuracion;
+
 		Tutoria tutoria = leerTutoria();
-		
+
 		System.out.println("** Fecha **");
-		do {
-			System.out.println("Introduce el año");
-			annio = Entrada.entero();
-		} while (annio < 2020);
-
-		do {
-			System.out.println("Introduce el mes");
-			mes = Entrada.entero();
-		} while (mes < 1 || mes > 12);
-
-		do {
-			System.out.println("Introduce el dia");
-			dia = Entrada.entero();
-		} while (dia < 1 || dia > 31);
-
-		fecha = LocalDate.of(annio, mes, dia);
+		try {
+			System.out.println("Introduce la fecha con el formato (dia/mes/año)");
+			fechaUsuario = Entrada.cadena();
+			fecha = LocalDate.parse(fechaUsuario, Sesion.FORMATO_FECHA);
+		} catch (DateTimeParseException d) {
+			throw new IllegalArgumentException("ERROR: La fecha no tiene un formato correcto.");
+		}
 		System.out.println("");
 
-		System.out.println("** Hora Inicio Sesión **");
-		do {
-			System.out.println("Introduce la hora");
-			horaInicio = Entrada.entero();
-		} while ((horaInicio < 0 || horaInicio > 23));
+		try {
+			System.out.println("** Hora Inicio Sesión **");
+			System.out.println("Introduce la hora con el formato (hora:minutos)");
+			horaInicioUsuario = Entrada.cadena();
 
-		do {
-			System.out.println("Introduce los minutos");
-			minInicio = Entrada.entero();
-		} while (minInicio < 0 || minInicio > 59);
+			horaInicioSesion = LocalTime.parse(horaInicioUsuario, Sesion.FORMATO_HORA);
+			System.out.println("");
 
-		horaInicioSesion = LocalTime.of(horaInicio, minInicio);
-		System.out.println("");
+			System.out.println("** Hora Fin Sesión **");
+			System.out.println("Introduce la hora con el formato (hora:minutos)");
+			horaFinUsuario = Entrada.cadena();
 
-		System.out.println("** Hora Fin Sesión **");
-		do {
-			System.out.println("Introduce la hora");
-			horaFin = Entrada.entero();
-		} while ((horaFin < 0 || horaFin > 23));
+			horaFinSesion = LocalTime.parse(horaFinUsuario, Sesion.FORMATO_HORA);
+			System.out.println("");
 
-		do {
-			System.out.println("Introduce los minutos");
-			minFin = Entrada.entero();
-		} while (minFin < 0 || minFin > 59);
-
-		horaFinSesion = LocalTime.of(horaFin, minFin);
-		System.out.println("");
+		} catch (DateTimeParseException d) {
+			throw new IllegalArgumentException("ERROR: La hora no tiene un formato correcto.");
+		}
 
 		System.out.println("** Minutos de duración **");
-		do {
-			System.out.println("Introduce los minutos de duración de la sesión: ");
-			minDuracion = Entrada.entero();
-		} while (minDuracion < 0 || minDuracion > 59);
+		System.out.println("Introduce los minutos de duración de la sesión: ");
+		minDuracion = Entrada.entero();
 		System.out.println("");
 
 		return new Sesion(tutoria, fecha, horaInicioSesion, horaFinSesion, minDuracion);
@@ -159,27 +142,19 @@ public class Consola {
 
 	public static Sesion leerSesionFicticia() {
 		LocalDate fecha;
-		int annio, mes, dia;
-		
+		String fechaUsuario;
+
 		Tutoria tutoria = leerTutoria();
-		
+
 		System.out.println("** Fecha **");
-		do {
-			System.out.println("Introduce el año");
-			annio = Entrada.entero();
-		} while (annio < 2020);
-
-		do {
-			System.out.println("Introduce el mes");
-			mes = Entrada.entero();
-		} while (mes < 1 || mes > 12);
-
-		do {
-			System.out.println("Introduce el dia");
-			dia = Entrada.entero();
-		} while (dia < 1 || dia > 31);
-
-		fecha = LocalDate.of(annio, mes, dia);
+		try {
+			System.out.println("Introduce la fecha con el formato (dia/mes/año)");
+			fechaUsuario = Entrada.cadena();
+			fecha = LocalDate.parse(fechaUsuario, Sesion.FORMATO_FECHA);
+		} catch (DateTimeParseException d) {
+			throw new IllegalArgumentException("ERROR: La fecha no tiene un formato correcto.");
+		}
+		fecha = LocalDate.parse(fechaUsuario, Sesion.FORMATO_FECHA);
 		System.out.println("");
 
 		return Sesion.getSesionFicticia(tutoria, fecha);
@@ -187,22 +162,18 @@ public class Consola {
 
 	public static Cita leerCita() {
 		LocalTime horaCita;
-		int hora, min;
+		String horaCitaUsuario;
+
 		Alumno alumno = leerAlumnoFicticio();
 		Sesion sesion = leerSesionFicticia();
+		try {
+		System.out.println("Introduce la hora con el formato (hora:minutos)");
+		horaCitaUsuario = Entrada.cadena();
+		} catch (DateTimeParseException d) {
+			throw new IllegalArgumentException("ERROR: La fecha no tiene un formato correcto.");
+		}
 
-		System.out.println("** Hora Cita **");
-		do {
-			System.out.println("Introduce la hora");
-			hora = Entrada.entero();
-		} while ((hora < 0 || hora > 23));
-
-		do {
-			System.out.println("Introduce los minutos");
-			min = Entrada.entero();
-		} while (min < 0 || min > 59);
-
-		horaCita = LocalTime.of(hora, min);
+		horaCita = LocalTime.parse(horaCitaUsuario, Sesion.FORMATO_HORA);
 		System.out.println("");
 
 		return new Cita(alumno, sesion, horaCita);
